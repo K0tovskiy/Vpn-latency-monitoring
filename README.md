@@ -24,7 +24,7 @@ For detailed guides, please refer to:
 ```bash
 # Clone the repository
 git clone https://github.com/K0tovskiy/VPN-servers-bench
-cd VPN-servers-monitor
+cd VPN-servers-bench
 
 # Install optional dependencies for graphing
 pip install -r requirements.txt
