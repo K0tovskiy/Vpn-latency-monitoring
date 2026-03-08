@@ -29,22 +29,18 @@ Percentage of successful probes vs. total attempts.
 
 The **Stability Score** is a weighted algorithm designed to penalize instability and reward consistent high performance. It converts various metrics into a single "Health Index".
 
-### Formula Weights
-The score starts at 100 and applies "penalty points" based on the following components:
-
-| Component | Max Penalty | Calculation |
-| :--- | :--- | :--- |
-| **Average Latency** | 30% | Linear penalty up to 500ms. |
-| **Jitter** | 20% | Linear penalty up to 200ms. |
-| **Packet Loss** | 20% | Direct percentage penalty (100% loss = 20 points). |
-| **Tail Latency (P95)**| 15% | Linear penalty up to 1000ms. |
-| **Speed (Optional)** | 15% | Penalty for low speed (0 Mbps = 15 points, 20+ Mbps = 0 points). |
-
-**Simplified Logic**:
-`Score = MAX(0, (1 - Σ (Metric / Threshold * Weight)) * 100)`
+We offer 3 different scoring formulas, all of which are strictly monotonic and continuous. By default, **`Score2`** is used for `--sort score`:
+- **`score1` (Multiplicative Exponential):** 
+  `Score = 100 * (lat_f^0.3) * (jit_f^0.2) * ...`
+  *Extremely aggressive. A single bad metric zeroes out the total score.*
+- **`score2` (Additive Exponential) [DEFAULT]:**
+  `Score = MAX(0, 100 * (1 - (0.3*lat_p + 0.2*jit_p + ...))`
+  Uses normalized exponentially decaying penalty values like `1 - exp(-latency/300)`. It converges smoothly and strictly to 0. 
+- **`score3` (Fractional):**
+  Uses rational fractions like `x / (x + N)`. It penalizes slower, creating longer "tails" where bad and very bad servers can still be differentiated slightly.
 
 > [!TIP]
-> This formula is intentionally "aggressive". A server with 10% packet loss will rarely score above 60, even if its latency is very low.
+> This new exponential/fractional curve applies a stricter penalty at the median ranges, but never abruptly "caps out". Any small improvement will mathematically improve the score.
 
 ---
 

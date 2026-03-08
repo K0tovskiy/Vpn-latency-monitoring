@@ -47,7 +47,7 @@ Examples:
     s.add_argument('--timespan', help='Time range "start-end" in ISO format (takes precedence)')
     s.add_argument('--servers', help='Filter by IDs, names or Sub URLs (can mix, comma-separated)')
     s.add_argument('--sort', default='score', help='Column to sort by (default: %(default)s)')
-    s.add_argument('--cols', default='Server,N,OK%,xray-ping:mean,xray-ping:p50,xray-ping:p90,xray-ping:p95,xray-ping:jit,xray-ping:σ,speed,score', 
+    s.add_argument('--cols', default='Server,N,OK%,xray-ping:mean,xray-ping:p50,xray-ping:p90,xray-ping:p95,xray-jit:mean,xray-ping:σ,speed,score', 
                    help='Comma separated columns (default: %(default)s)')
 
     g = sub.add_parser('graph', help='Generate PNG chart')
@@ -57,7 +57,7 @@ Examples:
     g.add_argument('--days', type=float, default=0, help='Takes precedence over --hours (default: %(default)s)')
     g.add_argument('--timespan', help='Time range "start-end" in ISO format (takes precedence)')
     g.add_argument('--output', help='Output filename')
-    g.add_argument('--plots', default="xray-ping:percentile-log,speed:dynamic,xray-jitter:percentile-log,speed:percentile", 
+    g.add_argument('--plots', default="xray-ping:percentile-log,speed:dynamic,xray-jit:percentile-log,speed:percentile", 
                    help='Comma separated plots (default: %(default)s)')
     g.add_argument('--fixed-scale', action='store_true', help='Use fixed Y-axis scale (log only)')
 

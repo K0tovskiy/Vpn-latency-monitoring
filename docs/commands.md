@@ -61,7 +61,7 @@ Generates a comprehensive statistical report.
 ### `graph [<identifier>]`
 Generates a multi-plot PNG report for a specific server (requires `matplotlib` and `numpy`).
 - **`--plots <type>:<style>`**: Comma-separated plots.
-    - Types: `xray-ping`, `tcp-ping`, `xray-jitter`, `tcp-jitter`, `speed`.
+    - Types: `xray-ping`, `tcp-ping`, `xray-jit`, `tcp-jit`, `speed`.
     - Styles:
         - `percentile`: Standard growth curve with P50/P90/P95/P99 markers.
         - `percentile-log`: Logarithmic scale growth curve (best for latency).
@@ -89,13 +89,14 @@ Format: `[provider:]metric`
 
 | Provider (Optional) | Metric | Description |
 | :--- | :--- | :--- |
-| `xray-ping` | `mean`, `jit`, `score` | Average, Jitter, or Stability Score. |
+| `xray-ping` | `mean`, `score1`, `score2`, `score3` | Average, or Stability Score. |
+| `xray-jit`  | `mean`, `p50`, `p90`, `p95` | Average jitter or percentile variations. |
 | `tcp-ping` | `p50`, `p90`, `p95` | Latency percentiles. |
 | (none) | `OK%`, `N`, `σ` | Success rate, Sample count, or StdDev. |
 
 - **Examples**: 
     - `--cols "Server,xray-ping:p95,speed"` (Shows Server name, Xray P95, and Speed).
-    - `--sort "xray-ping:jit"` (Sorts the table by Xray jitter).
+    - `--sort "xray-jit:mean"` (Sorts the table by Xray jitter).
 
 ### 2. `monitor` Flags (`--tasks`)
 Format: `metric:interval`
@@ -115,7 +116,7 @@ Format: `metric:style`
 | :--- | :--- | :--- |
 | `xray-ping` | `percentile` | Linear growth curve with P-markers. |
 | `tcp-ping` | `percentile-log` | Log-scale curve (best for latency). |
-| `xray-jitter` | `dynamic` | Chronological bar chart of values. |
+| `xray-jit` | `dynamic` | Chronological bar chart of values. |
 | `speed` | | |
 
 - **Example**: `graph "MyNode" --plots "xray-ping:percentile-log,speed:dynamic"`

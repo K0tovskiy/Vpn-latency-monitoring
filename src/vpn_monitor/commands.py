@@ -401,11 +401,11 @@ def cmd_stats(args):
             proto = ""
             type_str = ""
             metric_str = c
-        elif c == 'score' or 'score' in c.lower():
+        elif c.startswith('score') or 'score' in c.lower():
             w = 7
             proto = ""
             type_str = ""
-            metric_str = "Score"
+            metric_str = c.split(':')[-1].capitalize() if ':' in c else c.capitalize()
         elif c == 'speed' or 'speed' in c.lower():
             w = 7
             proto = ""
@@ -451,15 +451,27 @@ def cmd_stats(args):
                 if key.startswith('p') and key[1:].isdigit():
                     mapped[f'{p}-ping:{key}'] = val
             mapped[f'{p}-ping:mean'] = st[p]['mean']
-            mapped[f'{p}-ping:score'] = st[p]['score']
+            mapped[f'{p}-ping:score1'] = st[p]['score1']
+            mapped[f'{p}-ping:score2'] = st[p]['score2']
+            mapped[f'{p}-ping:score3'] = st[p]['score3']
             mapped[f'{p}-ping:σ'] = st[p]['stddev']
-            mapped[f'{p}-ping:jit'] = st[p]['jit_mean']
+            
+            mapped[f'{p}-jit:mean'] = st[p]['jit_mean']
+            for key, val in st[p].items():
+                if key.startswith('jit_p') and key[5:].isdigit():
+                    mapped[f'{p}-jit:p{key[5:]}'] = val
         
         mapped['speed'] = st['speed']['mean']
-        if mapped['xray-ping:score'] is not None:
-             mapped['score'] = mapped['xray-ping:score']
+        if mapped.get('xray-ping:score2') is not None:
+             mapped['score1'] = mapped['xray-ping:score1']
+             mapped['score2'] = mapped['xray-ping:score2']
+             mapped['score3'] = mapped['xray-ping:score3']
+             mapped['score'] = mapped['score2']
         else:
-             mapped['score'] = mapped.get('tcp-ping:score')
+             mapped['score1'] = mapped.get('tcp-ping:score1')
+             mapped['score2'] = mapped.get('tcp-ping:score2')
+             mapped['score3'] = mapped.get('tcp-ping:score3')
+             mapped['score'] = mapped.get('score2', 0.0)
         
         mapped['N'] = mapped['xray-ping:N'] if mapped['xray-ping:N'] > 0 else mapped['tcp-ping:N']
         mapped['OK%'] = mapped['xray-ping:OK%'] if 'xray-ping:N' in mapped and mapped['xray-ping:N'] > 0 else mapped.get('tcp-ping:OK%')
@@ -513,13 +525,13 @@ def cmd_stats(args):
                 line += pad(f"{val:4.0f}%", w) + " "
             elif c.endswith(':N') or c == 'N':
                 line += pad(f"{val:4d}", w) + " "
-            elif c == 'score' or c.endswith(':score'):
+            elif c.startswith('score') or 'score' in c:
                 line += pad(f"{C.score(val)}{val:5.1f}{C.RST}", w) + " "
             elif c == 'speed' or c.endswith('speed:mean'):
                 line += pad(f"{C.spd(val)}{val:5.1f}M{C.RST}", w) + " "
             elif c.endswith(':mean'):
                 line += pad(f"{C.lat(val)}{val:6.1f}{C.RST}ms", w) + " "
-            elif c.endswith('jit') or c.endswith('σ') or c.endswith('p50') or c.endswith('p90') or c.endswith('p95'):
+            elif 'jit' in c or c.endswith('σ') or (':' in c and c.split(':')[-1].startswith('p')) or c.startswith('p'):
                 line += pad(f"{val:6.1f}ms", w) + " "
             else:
                 line += pad(f"{val:6.1f}", w) + " "
@@ -680,10 +692,10 @@ def cmd_graph(args):
         elif metric == 'tcp-ping':
             data_arr = data['tcp']['lats_sorted'] if 'percentile' in ptype else data['tcp']['chrono_lats']
             c = '#1abc9c'
-        elif metric == 'xray-jitter':
+        elif metric == 'xray-jit':
             data_arr = data['xray']['jitters_sorted'] if 'percentile' in ptype else data['xray']['chrono_jitters']
             c = '#ff6b6b'
-        elif metric == 'tcp-jitter':
+        elif metric == 'tcp-jit':
             data_arr = data['tcp']['jitters_sorted'] if 'percentile' in ptype else data['tcp']['chrono_jitters']
             c = '#e74c3c'
         elif metric == 'speed':
