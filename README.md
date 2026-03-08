@@ -1,4 +1,4 @@
-# VPN Latency Monitor
+# VPN Latency Monitoring
 
 A specialized Python tool to monitor, test, and analyze VPN subscription servers (VLESS, VMESS, Trojan, Shadowsocks, Hysteria2, etc.) for latency, speed, and jitter characteristics.
 
@@ -8,9 +8,9 @@ This was my little weekend project to test my personal VPN subscription servers 
 
 ## Results Examples
 
-![alt text](last_stats_Швеция_2_example.png)
+![Germany network graph](last_stats_Germany_Fast_example.png)
 
-![alt text](stats_example.png)
+![All servers network graph](stats_example.png)
 
 ## 📖 Documentation
 
@@ -23,8 +23,8 @@ For detailed guides, please refer to:
 
 ```bash
 # Clone the repository
-git clone https://github.com/K0tovskiy/VPN-servers-monitor
-cd VPN-servers-monitor
+git clone https://github.com/K0tovskiy/Vpn-latency-monitoring
+cd Vpn-latency-monitoring
 
 # Install optional dependencies for graphing
 pip install -r requirements.txt
